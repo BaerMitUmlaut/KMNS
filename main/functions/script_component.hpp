@@ -1,0 +1,1 @@
+#include "\b\kmns\addons\main\script_component.hpp"
