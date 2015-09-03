@@ -9,14 +9,13 @@
  * None
  *
  * Example:
- * [] call kmns_main_fnc_perFramHandler
+ * [] call kmns_main_fnc_pfhMain
  *
  * Public: No
  */
 
 #include "script_component.hpp"
 private ["_currentFatigue", "_newFatigue"];
-
 
 if (isNil QGVAR(hardFatigue)) then {
 	GVAR(hardFatigue) = 0;
@@ -27,9 +26,10 @@ if (!(alive player)) then {
 	if (!(isNil QGVAR(handleSprintBlocker))) then {
 		(findDisplay 46) displayRemoveEventHandler ["KeyDown", GVAR(handleSprintBlocker)];
 	};
+	GVAR(handleSprintBlocker) = nil;
 	GVAR(hardFatigue) = 0;
 	GVAR(previousFatigue) = 0;
-	[GVAR(handlePFH)] call CBA_fnc_addPerFrameHandler;
+	[GVAR(handleMainPFH)] call CBA_fnc_removePerFrameHandler;
 } else {
 	_currentFatigue = getFatigue player;
 	_newFatigue = _currentFatigue;
@@ -48,18 +48,24 @@ if (!(alive player)) then {
 			};
 		};
 
-		GVAR(hardFatigue) = (GVAR(hardFatigue) + ((time - GVAR(lastAdjustment)) / 500 * _newFatigue)) min 1;
+		GVAR(hardFatigue) = (GVAR(hardFatigue) + ((time - GVAR(lastAdjustment)) / GVAR(enduranceConstant) * _newFatigue)) min 1;
+	};
 
-		//Block sprinting if hard fatigue is too high
-		if ((GVAR(hardFatigue) > 0.8) && (isNil QGVAR(handleSprintBlocker))) then {
-			GVAR(handleSprintBlocker) = (findDisplay 46) displayAddEventHandler ["KeyDown", {
-				if ((_this select 1) in (actionKeys "Turbo") && (vehicle player == player)) then {
-					true
-				} else {
-					false
-				};
-			}];
-		};
+
+	//Block sprinting if hard fatigue is too high
+	if ((GVAR(hardFatigue) > 0.8) && (isNil QGVAR(handleSprintBlocker))) then {
+		GVAR(handleSprintBlocker) = (findDisplay 46) displayAddEventHandler ["KeyDown", {
+			if ((_this select 1) in (actionKeys "Turbo") && (vehicle player == player)) then {
+				true
+			} else {
+				false
+			};
+		}];
+	};
+	//Unblock sprinting if hard fatigue is lower again
+	if ((GVAR(hardFatigue) < 0.8) && (!(isNil QGVAR(handleSprintBlocker)))) then {
+		(findDisplay 46) displayRemoveEventHandler ["KeyDown", GVAR(handleSprintBlocker)];
+		GVAR(handleSprintBlocker) = nil;
 	};
 
 	player setFatigue _newFatigue;

@@ -8,3 +8,5 @@
 #else
     #define PREP(fncName) DFUNC(fncName) = QUOTE(PATHTOF(functions\DOUBLES(fnc,fncName).sqf)) call SLX_XEH_COMPILE
 #endif
+
+#define KMNS_BASE_CONSTANT 475
