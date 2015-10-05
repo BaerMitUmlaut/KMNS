@@ -44,7 +44,7 @@ if (!(alive player)) then {
             //Add altitude based fatigue
             _heightASL = (getPosASL player) select 2;
             if (_heightASL > 1500) then {
-                _penaltyFactor = _penaltyFactor * ((_heightASL - 1500) / 500);
+                _penaltyFactor = _penaltyFactor * (1 + (_heightASL - 1500) / 500);
             };
             //Add temperature based fatigue
             _temperature = _heightASL call ace_weather_fnc_calculateTemperatureAtHeight;
