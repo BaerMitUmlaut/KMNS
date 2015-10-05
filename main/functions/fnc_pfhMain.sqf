@@ -64,7 +64,7 @@ if (!(alive player)) then {
 
 
 	//Block sprinting if hard fatigue is too high
-	if ((GVAR(hardFatigue) > 0.8) && (isNil QGVAR(handleSprintBlocker))) then {
+	if ((GVAR(hardFatigue) > 0.8) && {(isNil QGVAR(handleSprintBlocker))}) then {
 		GVAR(handleSprintBlocker) = (findDisplay 46) displayAddEventHandler ["KeyDown", {
 			if ((_this select 1) in (actionKeys "Turbo") && (vehicle player == player)) then {
 				true
@@ -74,7 +74,7 @@ if (!(alive player)) then {
 		}];
 	};
 	//Unblock sprinting if hard fatigue is lower again
-	if ((GVAR(hardFatigue) < 0.8) && (!(isNil QGVAR(handleSprintBlocker)))) then {
+	if ((!(isNil QGVAR(handleSprintBlocker))) && {(GVAR(hardFatigue) < 0.8)}) then {
 		(findDisplay 46) displayRemoveEventHandler ["KeyDown", GVAR(handleSprintBlocker)];
 		GVAR(handleSprintBlocker) = nil;
 	};
