@@ -4,7 +4,7 @@
  *
  * Arguments:
  * None
- * 
+ *
  * Return Value:
  * None
  *
@@ -15,7 +15,7 @@
  */
 
 #include "script_component.hpp"
-private ["_currentFatigue", "_newFatigue"];
+private ["_currentFatigue", "_newFatigue", "_penaltyFactor", "_heightASL", "_temperature"];
 
 if (isNil QGVAR(hardFatigue)) then {
 	GVAR(hardFatigue) = 0;
@@ -39,13 +39,24 @@ if (!(alive player)) then {
 		_newFatigue = (0.2 * GVAR(hardFatigue));
 	} else {
 		if (_currentFatigue > GVAR(previousFatigue)) then {
-			//Add hard fatigue penalty when player is currently gaining fatigue
+			//Add hard fatigue penalty
+            _penaltyFactor = 1 + 0.5 * GVAR(hardFatigue);
+            //Add altitude based fatigue
+            _heightASL = (getPosASL player) select 2;
+            if (_heightASL > 1500) then {
+                _penaltyFactor = _penaltyFactor * ((_heightASL - 1500) / 500);
+            };
+            //Add temperature based fatigue
+            _temperature = _heightASL call ace_weather_fnc_calculateTemperatureAtHeight;
+            if (abs(_temperature - 17.5) > 12.5) then {
+                _penaltyFactor = _penaltyFactor * (1 + (abs(_temperature - 17.5) / 10));
+            };
+            //Add sprinting penality
 			if ((animationState player) in ["amovpercmevasraswrfldf", "amovpercmevaslowwlnrdf", "amovpercmevasraswpstdf", "amovpercmevasnonwbindf", "amovpercmevasnonwnondf"]) then {
-				//Sprinting gets an even higher penalty
-				_newFatigue = GVAR(previousFatigue) + (_currentFatigue - GVAR(previousFatigue)) * (1 + 0.5 * GVAR(hardFatigue)) * 1.5;
-			} else {
-				_newFatigue = GVAR(previousFatigue) + (_currentFatigue - GVAR(previousFatigue)) * (1 + 0.5 * GVAR(hardFatigue));
+				_penaltyFactor = _penaltyFactor * 1.5;
 			};
+
+            _newFatigue = GVAR(previousFatigue) + (_currentFatigue - GVAR(previousFatigue)) * _penaltyFactor;
 		};
 
 		GVAR(hardFatigue) = (GVAR(hardFatigue) + ((time - GVAR(lastAdjustment)) / GVAR(enduranceConstant) * _newFatigue)) min 1;

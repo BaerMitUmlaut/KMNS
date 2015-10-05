@@ -5,7 +5,7 @@ class CfgPatches {
 		units[] = {};
 		weapons[] = {};
 		requiredVersion = 1.1;
-		requiredAddons[] = {"CBA_Main"};
+		requiredAddons[] = {"ace_weather"};
 		author[] = {"BaerMitUmlaut"};
 		authorUrl = "https://github.com/BaerMitUmlaut";
 		VERSION_CONFIG;
