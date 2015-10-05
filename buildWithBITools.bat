@@ -9,4 +9,5 @@ set pathSource="%pathCurrent%main"
 set pathBuild="%pathCurrent%build\@KMNS\Addons"
 if not exist %pathBuild% (mkdir %pathBuild%)
 "C:\Program Files (x86)\Steam\SteamApps\common\Arma 3 Tools\AddonBuilder\AddonBuilder.exe" %pathSource% %pathBuild% -clear -packonly -prefix="b\kmns\addons\main" -include="D:\Github\Arma\include.txt"
+copy /V /Y %pathBuild%\*.pbo %pathCurrent%
 pause
