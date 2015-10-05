@@ -9,6 +9,7 @@ PREP(pfhMain);
 PREP(pfhResting);
 PREP(removeRestingPFH);
 PREP(reset);
+PREP(set);
 
 GVAR(enduranceConstant) = KMNS_BASE_CONSTANT;
 GVAR(enduranceConstantOverwriteLevel) = 0;

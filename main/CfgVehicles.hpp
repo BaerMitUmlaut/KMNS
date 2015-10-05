@@ -59,7 +59,13 @@ class CfgVehicles {
 			};
 			class Adjustment {
 				displayName = "Factor";
-				description = "How much faster/slower the unit will lose endurance";
+				description = "How much faster/slower the unit will lose endurance (lower is better, value must be greater than 0)";
+				typeName = "NUMBER";
+				defaultValue = 1;
+			};
+			class Initial {
+				displayName = "Inital endurance";
+				description = "How much endurance the unit has left (higher is better, value must be between 0 and 1)";
 				typeName = "NUMBER";
 				defaultValue = 1;
 			};
