@@ -48,8 +48,8 @@ if (!(alive player)) then {
             };
             //Add temperature based fatigue
             _temperature = _heightASL call ace_weather_fnc_calculateTemperatureAtHeight;
-            if (abs(_temperature - 17.5) > 12.5) then {
-                _penaltyFactor = _penaltyFactor * (1 + (abs(_temperature - 17.5) / 10));
+            if (_temperature > 30) then {
+                _penaltyFactor = _penaltyFactor * (1 + ((_temperature - 30) / 10)^2);
             };
             //Add sprinting penality
             if ((animationState player) in ["amovpercmevasraswrfldf", "amovpercmevaslowwlnrdf", "amovpercmevasraswpstdf", "amovpercmevasnonwbindf", "amovpercmevasnonwnondf"]) then {
