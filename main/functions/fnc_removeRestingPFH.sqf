@@ -17,6 +17,6 @@
 #include "script_component.hpp"
 
 if (!(isNil QGVAR(handleRestingPFH))) then {
-	[GVAR(handleRestingPFH)] call CBA_fnc_removePerFrameHandler;
-	GVAR(handleRestingPFH) = nil;
+    [GVAR(handleRestingPFH)] call CBA_fnc_removePerFrameHandler;
+    GVAR(handleRestingPFH) = nil;
 };

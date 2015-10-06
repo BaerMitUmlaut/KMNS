@@ -19,5 +19,5 @@
 params ["_speed", "_cap"];
 
 if (isNil QGVAR(handleRestingPFH)) then {
-	GVAR(handleRestingPFH) = [FUNC(pfhResting), 1, [_speed, _cap]] call CBA_fnc_addPerFrameHandler;
+    GVAR(handleRestingPFH) = [FUNC(pfhResting), 1, [_speed, _cap]] call CBA_fnc_addPerFrameHandler;
 };
