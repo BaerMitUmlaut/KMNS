@@ -3,6 +3,7 @@
 ADDON = false;
 
 PREP(addRestingPFH);
+PREP(calculatePenalty);
 PREP(moduleAdjust);
 PREP(moduleRestingArea);
 PREP(pfhMain);

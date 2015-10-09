@@ -15,7 +15,7 @@
  */
 
 #include "script_component.hpp"
-private ["_currentFatigue", "_newFatigue", "_penaltyFactor", "_heightASL", "_temperature"];
+private ["_currentFatigue", "_newFatigue", "_penaltyFactor"];
 
 if (isNil QGVAR(hardFatigue)) then {
     GVAR(hardFatigue) = 0;
@@ -39,29 +39,16 @@ if (!(alive player)) then {
         _newFatigue = (0.2 * GVAR(hardFatigue));
     } else {
         if (_currentFatigue > GVAR(previousFatigue)) then {
-            //Add hard fatigue penalty
-            _penaltyFactor = 1 + 0.5 * GVAR(hardFatigue);
-            //Add altitude based fatigue
-            _heightASL = (getPosASL player) select 2;
-            if (_heightASL > 1500) then {
-                _penaltyFactor = _penaltyFactor * (1 + (_heightASL - 1500) / 500);
-            };
-            //Add temperature based fatigue
-            _temperature = _heightASL call ace_weather_fnc_calculateTemperatureAtHeight;
-            if (_temperature > 30) then {
-                _penaltyFactor = _penaltyFactor * (1 + ((_temperature - 30) / 10)^2);
-            };
-            //Add sprinting penality
-            if ((animationState player) in ["amovpercmevasraswrfldf", "amovpercmevaslowwlnrdf", "amovpercmevasraswpstdf", "amovpercmevasnonwbindf", "amovpercmevasnonwnondf"]) then {
-                _penaltyFactor = _penaltyFactor * 1.5;
-            };
-
+            _penaltyFactor = [false] call FUNC(calculatePenalty);
             _newFatigue = GVAR(previousFatigue) + (_currentFatigue - GVAR(previousFatigue)) * _penaltyFactor;
+
+            //Only increase hard fatigue when the player is not resting
+            GVAR(hardFatigue) = (GVAR(hardFatigue) + ((time - GVAR(lastAdjustment)) / GVAR(enduranceConstant) * _newFatigue)) min 1;
+        } else {
+            _penaltyFactor = [true] call FUNC(calculatePenalty);
+            _newFatigue = GVAR(previousFatigue) - (GVAR(previousFatigue) - _currentFatigue) / _penaltyFactor;
         };
-
-        GVAR(hardFatigue) = (GVAR(hardFatigue) + ((time - GVAR(lastAdjustment)) / GVAR(enduranceConstant) * _newFatigue)) min 1;
     };
-
 
     //Block sprinting if hard fatigue is too high
     if ((GVAR(hardFatigue) > 0.8) && {(isNil QGVAR(handleSprintBlocker))}) then {
@@ -79,8 +66,8 @@ if (!(alive player)) then {
         GVAR(handleSprintBlocker) = nil;
     };
 
-    player setFatigue _newFatigue;
-    GVAR(previousFatigue) = _newFatigue;
+    player setFatigue (_newFatigue min 1);
+    GVAR(previousFatigue) = (_newFatigue min 1);
 };
 
 GVAR(lastAdjustment) = time;
